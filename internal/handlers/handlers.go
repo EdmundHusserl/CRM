@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/EdmundHusserl/CRM/internal/repository"
@@ -22,6 +23,7 @@ type CustomerHandler interface {
 	Delete(w http.ResponseWriter, r *http.Request) 
 	Get(w http.ResponseWriter, r *http.Request) 
 	GetAll(w http.ResponseWriter, r *http.Request)
+	Update(w http.ResponseWriter, r *http.Request)
 }
 
 func NewCustomerHandler(repo repository.CustomerRepository) CustomerHandler {
@@ -30,12 +32,14 @@ func NewCustomerHandler(repo repository.CustomerRepository) CustomerHandler {
 
 func (h Customer) Create(w http.ResponseWriter, r *http.Request) {
   var c repository.Customer
-  w.Header().Set("Content-Type", "application/json")
+	
+	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
       http.Error(w, "Invalid request payload", http.StatusBadRequest)
       return
   }
   c.ID = uuid.New()
+	fmt.Println(c)
   if err := h.Repo.Create(c); err != nil {
       http.Error(w, "Could not create user", http.StatusInternalServerError)
       return
@@ -65,7 +69,8 @@ func (h Customer) Get(w http.ResponseWriter, r *http.Request) {
 		}
 		c, err := h.Repo.Get(id) 
 		if err != nil {
-			http.Error(w, "Could not get user", http.StatusInternalServerError)
+			http.Error(w, "Could not get user", http.StatusNotFound)
+			return
 		}
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(c)
@@ -75,13 +80,30 @@ func (h Customer) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	id, err := uuid.Parse(vars["id"])  
-	if err != nil {	
-		http.Error(w, "Invalid id format", http.StatusBadRequest)	
+	if err != nil {
+		http.Error(w, "Invalid id format", http.StatusBadRequest)
+		return	
 	}
 	err = h.Repo.Delete(id)
 	if err != nil {
-		http.Error(w, "Could not get user", http.StatusInternalServerError)
+		http.Error(w, "Could not delete user", http.StatusBadRequest)
+		return
 	}
 	w.WriteHeader(http.StatusNoContent)
 }
 
+func (h Customer) Update(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var c repository.Customer
+	if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
+      http.Error(w, "Invalid request payload", http.StatusBadRequest)
+      return
+  }
+	
+	if err := h.Repo.Update(c); err != nil {
+		http.Error(w, "Could not update user", http.StatusBadRequest)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(c)
+}  

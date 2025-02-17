@@ -15,7 +15,7 @@ import (
 
 func main() {
    
-	connStr := "host=localhost port=5432 user=user password=password dbname=customers sslmode=disable"
+	connStr := "host=localhost port=5432 user=postgres password=p4ssw0rd dbname=customers sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatalf("Error opening psql instance db: %v", err)

@@ -18,18 +18,19 @@ const (
 )
 
 type Customer struct {
-	ID 					uuid.UUID
-	Name 				string
-	Role 			  customerRole
-	Email 		  string 
-	PhoneNumber string
+	ID 					uuid.UUID    `json:"id"`
+	Name 				string       `json:"name"` 
+	Role 			  customerRole `json:"role"`
+	Email 		  string       `json:"email"`
+	PhoneNumber string       `json:"phone_number"`
 }
 
 type CustomerRepository interface {
 	Create(c Customer) error
 	Delete(id uuid.UUID) error
 	Get(id uuid.UUID) (*Customer, error)
-	GetAll() ([]Customer, error) 
+	GetAll() ([]Customer, error)
+	Update(c Customer) error 
 }
 
 func (c Customer) ValidateEmail() (*string, error) {

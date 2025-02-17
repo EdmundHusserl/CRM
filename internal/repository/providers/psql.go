@@ -3,6 +3,7 @@ package providers
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/EdmundHusserl/CRM/internal/repository"
 	"github.com/google/uuid"
@@ -28,7 +29,7 @@ func (r *PostgresCustomerRepository) Create(c repository.Customer) error {
 	}
 	_, err := r.db.Exec(
 			"INSERT INTO customers (id, name, role, email, phone_number) VALUES ($1, $2, $3, $4, $5)", 
-			c.ID, c.Name, c.Email, c.Role, c.PhoneNumber)
+			c.ID, c.Name, c.Role, c.Email, c.PhoneNumber)
   return err
 }
 
@@ -63,4 +64,27 @@ func (r *PostgresCustomerRepository) GetAll() ([]repository.Customer, error) {
 func (r *PostgresCustomerRepository) Delete(id uuid.UUID) error {
   _, err := r.db.Exec("DELETE FROM customers WHERE id=$1", id)
   return err
+}
+
+func (r *PostgresCustomerRepository) Update(c repository.Customer) (error) {
+  tx, err := r.db.Begin()
+  if err != nil {
+    fmt.Printf("DB operational error: %v\n", err)
+    return err
+  }
+  query := "UPDATE customers SET name=$2 role=$3 email=$4 phone_number=$5 WHERE id=$1"
+  _, err = tx.Exec(query, c.ID, c.Name, c.Role, c.Email, c.PhoneNumber)
+  if err != nil {
+    fmt.Printf("DB operational error: %v\n", err)
+    tx.Rollback()
+    return err
+  }
+  err = tx.Commit()
+  if err != nil {
+    fmt.Printf("DB operational error: %v\n", err)
+    tx.Rollback()
+    return err
+  }
+  fmt.Println("Transaction commited successfully")
+  return nil
 }
