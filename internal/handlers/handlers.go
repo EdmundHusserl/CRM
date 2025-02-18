@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/EdmundHusserl/CRM/internal/repository"
@@ -39,7 +38,6 @@ func (h Customer) Create(w http.ResponseWriter, r *http.Request) {
       return
   }
   c.ID = uuid.New()
-	fmt.Println(c)
   if err := h.Repo.Create(c); err != nil {
       http.Error(w, "Could not create user", http.StatusInternalServerError)
       return

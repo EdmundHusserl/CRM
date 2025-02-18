@@ -72,7 +72,7 @@ func (r *PostgresCustomerRepository) Update(c repository.Customer) (error) {
     fmt.Printf("DB operational error: %v\n", err)
     return err
   }
-  query := "UPDATE customers SET name=$2 role=$3 email=$4 phone_number=$5 WHERE id=$1"
+  query := "UPDATE customers SET name=$2, role=$3, email=$4, phone_number=$5 WHERE id=$1"
   _, err = tx.Exec(query, c.ID, c.Name, c.Role, c.Email, c.PhoneNumber)
   if err != nil {
     fmt.Printf("DB operational error: %v\n", err)
