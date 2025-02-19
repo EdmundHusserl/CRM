@@ -1,0 +1,39 @@
+# Starts PostgreSQL database and front-end app for development, assuming the back-end service will be built and run separately by developer
+version: "3"
+services:
+  postgresql:
+    image: "bitnami/postgresql:16"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRESQL_PASSWORD=p4ssw0rd
+      - POSTGRESQL_DATABASE=customers
+    volumes:
+      - ./migrations:/docker-entrypoint-initdb.d
+    networks:
+      - go-crm
+    healthcheck:
+      test: ["CMD", "pg_isready", "--dbname=readcommend", "--username=postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  api:
+    build: .
+    #image: "edmundhusserl/go-crm-api:v0.4.0"
+    ports:
+      - "3000:3000"
+    entrypoint: 
+      - "/app"
+      - "-db"
+      - "psql"
+    environment: 
+      - DB_HOST=postgresql
+      - DB_PASSWORD=p4ssw0rd
+    networks:
+      - go-crm
+    depends_on: 
+      - postgresql
+
+networks:
+  go-crm: {}

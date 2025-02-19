@@ -40,6 +40,9 @@ func getConnectionString() string {
 
 func NewPostgresCustomerRepository(l *logrus.Logger) *PostgresCustomerRepository {
 	connStr := getConnectionString()
+
+	l.WithField("event", fmt.Sprintf("attempting psql connection with %s", connStr)).Info("db connection")
+
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		l.WithField(
@@ -47,6 +50,7 @@ func NewPostgresCustomerRepository(l *logrus.Logger) *PostgresCustomerRepository
 			err.Error(),
 		).Fatal("error opening psql instance")
 	}
+
 	return &PostgresCustomerRepository{db: db}
 }
 
