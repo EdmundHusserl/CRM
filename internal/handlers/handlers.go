@@ -44,7 +44,7 @@ func (h Customer) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		e := HandlerError{ErrorMsg: fmt.Sprintf("Invalid e-mail format: %v", c)}
+		e := HandlerError{ErrorMsg: fmt.Sprintf("Invalid e-mail format: %s", err.Error())}
 		jsonEnc.Encode(e)
 
 		h.Logger.WithFields(logrus.Fields{
