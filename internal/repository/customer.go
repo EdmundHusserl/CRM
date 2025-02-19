@@ -23,6 +23,7 @@ type Customer struct {
 	Role        customerRole `json:"role"`
 	Email       string       `json:"email"`
 	PhoneNumber string       `json:"phone_number"`
+	Contacted   bool         `json:"contacted"`
 }
 
 type CustomerRepository interface {

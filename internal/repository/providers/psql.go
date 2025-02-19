@@ -60,15 +60,15 @@ func (r *PostgresCustomerRepository) CloseDBConnection() error {
 
 func (r *PostgresCustomerRepository) Create(c repository.Customer) error {
 	_, err := r.db.Exec(
-		"INSERT INTO customers (id, name, role, email, phone_number) VALUES ($1, $2, $3, $4, $5)",
-		c.ID, c.Name, c.Role, c.Email, c.PhoneNumber)
+		"INSERT INTO customers (id, name, role, email, phone_number, contacted) VALUES ($1, $2, $3, $4, $5, $6)",
+		c.ID, c.Name, c.Role, c.Email, c.PhoneNumber, c.Contacted)
 	return err
 }
 
 func (r *PostgresCustomerRepository) Get(id uuid.UUID) (*repository.Customer, error) {
 	c := &repository.Customer{}
 	err := r.db.QueryRow(
-		"SELECT id, name, role, email, phone_number FROM customers WHERE id=$1", id).Scan(&c.ID, &c.Name, &c.Role, &c.Email, &c.PhoneNumber)
+		"SELECT id, name, role, email, phone_number, contacted FROM customers WHERE id=$1", id).Scan(&c.ID, &c.Name, &c.Role, &c.Email, &c.PhoneNumber, &c.Contacted)
 
 	if err == sql.ErrNoRows {
 		return nil, errors.New("user not found")
@@ -77,7 +77,7 @@ func (r *PostgresCustomerRepository) Get(id uuid.UUID) (*repository.Customer, er
 }
 
 func (r *PostgresCustomerRepository) GetAll() ([]repository.Customer, error) {
-	rows, err := r.db.Query("SELECT id, name, role, email, phone_number FROM customers")
+	rows, err := r.db.Query("SELECT id, name, role, email, phone_number, contacted FROM customers")
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (r *PostgresCustomerRepository) GetAll() ([]repository.Customer, error) {
 	var customers []repository.Customer
 	for rows.Next() {
 		var c repository.Customer
-		if err := rows.Scan(&c.ID, &c.Name, &c.Role, &c.Email, &c.PhoneNumber); err != nil {
+		if err := rows.Scan(&c.ID, &c.Name, &c.Role, &c.Email, &c.PhoneNumber, &c.Contacted); err != nil {
 			return nil, err
 		}
 		customers = append(customers, c)
@@ -104,8 +104,8 @@ func (r *PostgresCustomerRepository) Update(c repository.Customer) error {
 		fmt.Printf("DB operational error: %v\n", err)
 		return err
 	}
-	query := "UPDATE customers SET name=$2, role=$3, email=$4, phone_number=$5 WHERE id=$1"
-	_, err = tx.Exec(query, c.ID, c.Name, c.Role, c.Email, c.PhoneNumber)
+	query := "UPDATE customers SET name=$2, role=$3, email=$4, phone_number=$5, contacted=$6 WHERE id=$1"
+	_, err = tx.Exec(query, c.ID, c.Name, c.Role, c.Email, c.PhoneNumber, c.Contacted)
 	if err != nil {
 		fmt.Printf("DB operational error: %v\n", err)
 		tx.Rollback()

@@ -72,6 +72,7 @@ func (r *InMemoryCustomerRepository) Update(c repository.Customer) error {
 			r.Customers[i].Role = c.Role
 			r.Customers[i].Email = c.Email
 			r.Customers[i].PhoneNumber = c.PhoneNumber
+			r.Customers[i].Contacted = c.Contacted
 			return nil
 		}
 	}

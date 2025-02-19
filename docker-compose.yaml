@@ -7,13 +7,13 @@ services:
       - "5432:5432"
     environment:
       - POSTGRESQL_PASSWORD=p4ssw0rd
-      - POSTGRESQL_DATABASE=customers
+      - PGPASSWORD=p4ssw0rd
     volumes:
       - ./migrations:/docker-entrypoint-initdb.d
     networks:
       - go-crm
     healthcheck:
-      test: ["CMD", "pg_isready", "--dbname=customers", "--username=postgres"]
+      test: ["CMD", "pg_isready", "--dbname=postgres", "--username=postgres"]
       interval: 10s
       timeout: 5s
       retries: 3
