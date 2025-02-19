@@ -1,29 +1,23 @@
 package main
 
 import (
-	"database/sql"
+	"flag"
 	"fmt"
-	"log"
-	"net/http"
 
-	"github.com/EdmundHusserl/CRM/internal/handlers"
-	psql "github.com/EdmundHusserl/CRM/internal/repository/providers"
-	"github.com/EdmundHusserl/CRM/internal/router"
-
-	_ "github.com/lib/pq"
+	"github.com/EdmundHusserl/CRM/internal/server"
 )
 
 func main() {
+	dbProvider := flag.String("db", "in-memory", "DB provider: in-memory|psql. Default: in-memory.")
+	serverPort := flag.Int("port", 3000, "Server port. Default: 3000")
+	flag.Parse()
 
-	connStr := psql.GetConnectionString()
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		log.Fatalf("Error opening psql instance db: %v", err)
-	}
-	defer db.Close()
-	repo := psql.NewPostgresCustomerRepository(db)
-	handler := handlers.NewCustomerHandler(repo)	
-	router := router.NewRouter(handler) 
-  fmt.Println("Server is starting on port 3000...")
-  http.ListenAndServe(":3000", router)
+	server := server.NewServer(*dbProvider, *serverPort)
+	defer server.DB.CloseDBConnection()
+
+	server.Logger.WithField(
+		"event",
+		fmt.Sprintf("Server is starting on port %s...", server.Addr[1:]),
+	)
+	server.Listen()
 }

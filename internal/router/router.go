@@ -14,5 +14,5 @@ func NewRouter(h handlers.CustomerHandler) *mux.Router {
 	router.HandleFunc("/customers", h.Update).Methods(http.MethodPatch)
 	router.HandleFunc("/customers", h.Create).Methods(http.MethodPost)
 	router.HandleFunc("/customers", h.GetAll).Methods(http.MethodGet)
-	return router 
+	return router
 }
