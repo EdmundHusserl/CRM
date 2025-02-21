@@ -1,4 +1,19 @@
 definitions:
+  github_com_EdmundHusserl_CRM_internal_repository.Customer:
+    properties:
+      contacted:
+        type: boolean
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      phone_number:
+        type: string
+      role:
+        type: integer
+    type: object
   internal_handlers.CustomerCreatedResponse:
     properties:
       id:
@@ -12,7 +27,7 @@ definitions:
 info:
   contact: {}
 paths:
-  /customers:
+  /api/customers:
     get:
       consumes:
       - application/json
@@ -23,7 +38,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_handlers.CustomerCreatedResponse'
+            items:
+              $ref: '#/definitions/github_com_EdmundHusserl_CRM_internal_repository.Customer'
+            type: array
         "500":
           description: Internal Server Error
           schema:
@@ -65,7 +82,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_handlers.CustomerCreatedResponse'
+            $ref: '#/definitions/github_com_EdmundHusserl_CRM_internal_repository.Customer'
         "400":
           description: Bad Request
           schema:
@@ -129,7 +146,7 @@ paths:
           schema:
             $ref: '#/definitions/internal_handlers.HandlerError'
       summary: Create a customer
-  /customers/{id}:
+  /api/customers/{id}:
     delete:
       consumes:
       - application/json
@@ -154,7 +171,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_handlers.CustomerCreatedResponse'
+            $ref: '#/definitions/github_com_EdmundHusserl_CRM_internal_repository.Customer'
         "404":
           description: Not Found
           schema:

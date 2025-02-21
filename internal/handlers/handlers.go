@@ -50,7 +50,7 @@ func NewCustomerHandler(logger *logrus.Logger, repo repository.CustomerRepositor
 // @Failure 400 {object} HandlerError
 // @Failure 422 {object} HandlerError
 // @Failure 500 {object} HandlerError
-// @Router /customers [post]
+// @Router /api/customers [post]
 func (h Customer) Create(w http.ResponseWriter, r *http.Request) {
 	var c repository.Customer
 
@@ -120,9 +120,9 @@ func (h Customer) Create(w http.ResponseWriter, r *http.Request) {
 // @Description Get all customers
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} CustomerCreatedResponse
+// @Success 200 {object} []repository.Customer
 // @Failure 500 {object} HandlerError
-// @Router /customers [get]
+// @Router /api/customers [get]
 func (h Customer) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	jsonEnc := json.NewEncoder(w)
@@ -150,10 +150,10 @@ func (h Customer) GetAll(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 // @Param id query uuid.UUID true "User id"
-// @Success 200 {object} CustomerCreatedResponse
+// @Success 200 {object} repository.Customer
 // @Failure 404 {object} HandlerError
 // @Failure 422 {object} HandlerError
-// @Router /customers/{id} [get]
+// @Router /api/customers/{id} [get]
 func (h Customer) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	jsonEnc := json.NewEncoder(w)
@@ -199,7 +199,7 @@ func (h Customer) Get(w http.ResponseWriter, r *http.Request) {
 // @Param id query uuid.UUID true "User id"
 // @Success 204 {object} nil
 // @Failure 422 {object} HandlerError
-// @Router /customers/{id} [delete]
+// @Router /api/customers/{id} [delete]
 func (h Customer) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	jsonEnc := json.NewEncoder(w)
@@ -252,11 +252,11 @@ func (h Customer) Delete(w http.ResponseWriter, r *http.Request) {
 // @Param email query string true "Customer e-mail"
 // @Param phone_number query string true "Customer phone number"
 // @Param contacted query boolean true "Customer Contacted status"
-// @Success 200 {object} CustomerCreatedResponse
+// @Success 200 {object} repository.Customer
 // @Failure 400 {object} HandlerError
 // @Failure 422 {object} HandlerError
 // @Failure 500 {object} HandlerError
-// @Router /customers [patch]
+// @Router /api/customers [patch]
 func (h Customer) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	jsonEnc := json.NewEncoder(w)

@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/customers": {
+        "/api/customers": {
             "get": {
                 "description": "Get all customers",
                 "consumes": [
@@ -29,7 +29,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_handlers.CustomerCreatedResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_EdmundHusserl_CRM_internal_repository.Customer"
+                            }
                         }
                     },
                     "500": {
@@ -163,7 +166,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_handlers.CustomerCreatedResponse"
+                            "$ref": "#/definitions/github_com_EdmundHusserl_CRM_internal_repository.Customer"
                         }
                     },
                     "400": {
@@ -187,7 +190,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/customers/{id}": {
+        "/api/customers/{id}": {
             "get": {
                 "description": "Get a customer by id",
                 "consumes": [
@@ -201,7 +204,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_handlers.CustomerCreatedResponse"
+                            "$ref": "#/definitions/github_com_EdmundHusserl_CRM_internal_repository.Customer"
                         }
                     },
                     "404": {
@@ -242,6 +245,29 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_EdmundHusserl_CRM_internal_repository.Customer": {
+            "type": "object",
+            "properties": {
+                "contacted": {
+                    "type": "boolean"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "integer"
+                }
+            }
+        },
         "internal_handlers.CustomerCreatedResponse": {
             "type": "object",
             "properties": {
