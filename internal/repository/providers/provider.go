@@ -28,6 +28,11 @@ func NewRepository(l *logrus.Logger, provider string) repository.CustomerReposit
 	case "psql":
 		return NewPostgresCustomerRepository(l)
 	default:
-		return &InMemoryCustomerRepository{Customers: []repository.Customer{}}
+		var customers []repository.Customer
+		c, _ := LoadFromCSVFile(l, "./migrations/data.csv")
+		if c != nil {
+			customers = c
+		}
+		return &InMemoryCustomerRepository{Customers: customers}
 	}
 }

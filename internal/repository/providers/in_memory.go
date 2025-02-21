@@ -1,10 +1,14 @@
 package providers
 
 import (
+	"encoding/csv"
 	"fmt"
+	"os"
+	"strconv"
 
 	"github.com/EdmundHusserl/CRM/internal/repository"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 )
 
 type InMemoryCustomerRepository struct {
@@ -49,7 +53,7 @@ func (r *InMemoryCustomerRepository) Delete(id uuid.UUID) error {
 		if c.ID == id {
 			found = true
 			index = i
-			continue
+			break
 		}
 	}
 	if !found {
@@ -77,4 +81,55 @@ func (r *InMemoryCustomerRepository) Update(c repository.Customer) error {
 		}
 	}
 	return fmt.Errorf("could not update user with ID %v", c.ID)
+}
+
+func LoadFromCSVFile(l *logrus.Logger, path string) ([]repository.Customer, error) {
+	// Open the CSV file
+	file, err := os.Open(path)
+	if err != nil {
+		l.WithField(
+			"event",
+			fmt.Sprintf("opening csv file name %s threw error: %s", path, err.Error()),
+		).Error("failure while opening files")
+		return nil, err
+	}
+	defer file.Close()
+
+	// Read the CSV file
+	reader := csv.NewReader(file)
+	lines, err := reader.ReadAll()
+	if err != nil {
+		l.WithField("event", err.Error()).Error("failure during data parsing")
+		return nil, err
+	}
+
+	customers := []repository.Customer{}
+
+	// Loop through lines (skipping header)
+	for i, line := range lines {
+		if i == 0 {
+			continue // Skip header row
+		}
+
+		role, err := strconv.Atoi(line[1])
+		if err != nil {
+			l.WithField("event", err.Error()).Warn(fmt.Sprintf("failed parsing role column %s", line[1]))
+		}
+		contacted, err := strconv.ParseBool(line[4])
+		if err != nil {
+			l.WithField("event", err.Error()).Warn(fmt.Sprintf("failed parsing contacted column %s", line[4]))
+		}
+
+		c := repository.Customer{
+			ID:          uuid.New(),
+			Name:        line[0],
+			Role:        repository.CustomerRole(role),
+			Email:       line[2],
+			PhoneNumber: line[3],
+			Contacted:   contacted,
+		}
+		customers = append(customers, c)
+	}
+
+	return customers, nil
 }

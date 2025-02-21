@@ -1,0 +1,167 @@
+definitions:
+  internal_handlers.CustomerCreatedResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  internal_handlers.HandlerError:
+    properties:
+      error_message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /customers:
+    get:
+      consumes:
+      - application/json
+      description: Get all customers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CustomerCreatedResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handlers.HandlerError'
+      summary: Get all customers
+    patch:
+      consumes:
+      - application/json
+      description: Create customers
+      parameters:
+      - description: Customer Name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Customer role
+        in: query
+        name: role
+        required: true
+        type: integer
+      - description: Customer e-mail
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: Customer phone number
+        in: query
+        name: phone_number
+        required: true
+        type: string
+      - description: Customer Contacted status
+        in: query
+        name: contacted
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CustomerCreatedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.HandlerError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/internal_handlers.HandlerError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handlers.HandlerError'
+      summary: Update customer
+    post:
+      consumes:
+      - application/json
+      description: Create customers
+      parameters:
+      - description: Customer Name
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Customer role
+        in: query
+        name: role
+        required: true
+        type: integer
+      - description: Customer e-mail
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: Customer phone number
+        in: query
+        name: phone_number
+        required: true
+        type: string
+      - description: Customer Contacted status
+        in: query
+        name: contacted
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CustomerCreatedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.HandlerError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/internal_handlers.HandlerError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handlers.HandlerError'
+      summary: Create a customer
+  /customers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Get a customer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/internal_handlers.HandlerError'
+      summary: Delete a customer
+    get:
+      consumes:
+      - application/json
+      description: Get a customer by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CustomerCreatedResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.HandlerError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/internal_handlers.HandlerError'
+      summary: Get a customer by id
+swagger: "2.0"

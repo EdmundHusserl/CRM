@@ -36,6 +36,21 @@ func NewCustomerHandler(logger *logrus.Logger, repo repository.CustomerRepositor
 	return Customer{Logger: logger, Repo: repo}
 }
 
+// Create create a new customer
+// @Summary Create a customer
+// @Description Create customers
+// @Accept  json
+// @Produce  json
+// @Param name query string true "Customer Name"
+// @Param role query int true "Customer role" "Enum: 1=Base 2=Premium 3=Partner"
+// @Param email query string true "Customer e-mail"
+// @Param phone_number query string true "Customer phone number"
+// @Param contacted query boolean true "Customer Contacted status"
+// @Success 200 {object} CustomerCreatedResponse
+// @Failure 400 {object} HandlerError
+// @Failure 422 {object} HandlerError
+// @Failure 500 {object} HandlerError
+// @Router /customers [post]
 func (h Customer) Create(w http.ResponseWriter, r *http.Request) {
 	var c repository.Customer
 
@@ -81,7 +96,7 @@ func (h Customer) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err := h.Repo.Create(c); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		e := HandlerError{ErrorMsg: fmt.Sprintf("Could not create user: %s", err.Error())}
+		e := HandlerError{ErrorMsg: fmt.Sprintf("Could not create euser: %s", err.Error())}
 		jsonEnc.Encode(e)
 
 		h.Logger.WithFields(logrus.Fields{
@@ -100,6 +115,14 @@ func (h Customer) Create(w http.ResponseWriter, r *http.Request) {
 	}).Info("New record created")
 }
 
+// GetAll Get all customers
+// @Summary Get all customers
+// @Description Get all customers
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} CustomerCreatedResponse
+// @Failure 500 {object} HandlerError
+// @Router /customers [get]
 func (h Customer) GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	jsonEnc := json.NewEncoder(w)
@@ -121,6 +144,16 @@ func (h Customer) GetAll(w http.ResponseWriter, r *http.Request) {
 	jsonEnc.Encode(customers)
 }
 
+// Get customer
+// @Summary Get a customer by id
+// @Description Get a customer by id
+// @Accept  json
+// @Produce  json
+// @Param id query uuid.UUID true "User id"
+// @Success 200 {object} CustomerCreatedResponse
+// @Failure 404 {object} HandlerError
+// @Failure 422 {object} HandlerError
+// @Router /customers/{id} [get]
 func (h Customer) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	jsonEnc := json.NewEncoder(w)
@@ -158,6 +191,15 @@ func (h Customer) Get(w http.ResponseWriter, r *http.Request) {
 	jsonEnc.Encode(c)
 }
 
+// Delete customer
+// @Summary Delete a customer
+// @Description Get a customer
+// @Accept  json
+// @Produce  json
+// @Param id query uuid.UUID true "User id"
+// @Success 204 {object} nil
+// @Failure 422 {object} HandlerError
+// @Router /customers/{id} [delete]
 func (h Customer) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	jsonEnc := json.NewEncoder(w)
@@ -199,6 +241,22 @@ func (h Customer) Delete(w http.ResponseWriter, r *http.Request) {
 	}).Info("New record deleted")
 }
 
+// Update customer
+// @Summary Update customer
+// @Description Create customers
+// @Accept  json
+// @Produce  json
+// @Param id query uuid.UUID true "User id"
+// @Param name query string true "Customer Name"
+// @Param role query int true "Customer role" "Enum: 1=Base 2=Premium 3=Partner"
+// @Param email query string true "Customer e-mail"
+// @Param phone_number query string true "Customer phone number"
+// @Param contacted query boolean true "Customer Contacted status"
+// @Success 200 {object} CustomerCreatedResponse
+// @Failure 400 {object} HandlerError
+// @Failure 422 {object} HandlerError
+// @Failure 500 {object} HandlerError
+// @Router /customers [patch]
 func (h Customer) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	jsonEnc := json.NewEncoder(w)

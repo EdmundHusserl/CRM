@@ -9,7 +9,7 @@ import (
 )
 
 // Define a new Enum which is descriptive of client roles.
-type customerRole int
+type CustomerRole int
 
 const (
 	Basic = iota
@@ -20,7 +20,7 @@ const (
 type Customer struct {
 	ID          uuid.UUID    `json:"id"`
 	Name        string       `json:"name"`
-	Role        customerRole `json:"role"`
+	Role        CustomerRole `json:"role"`
 	Email       string       `json:"email"`
 	PhoneNumber string       `json:"phone_number"`
 	Contacted   bool         `json:"contacted"`
